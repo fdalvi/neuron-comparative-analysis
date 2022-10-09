@@ -17,20 +17,50 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 import argparse
 
-def compute(input_folder, out_path, tag,layer, setting):
+def compute(input_folder, out_path, tag, layer, setting):
    
-    X_train = np.load("data/train_data_"+ str(layer) + "_"+ tag + ".npy")
-    X_dev = np.load("data/dev_data_"+ str(layer) + "_"+ tag + ".npy" )
-    y_train = np.load("data/train_label_" + tag + ".npy")
-    y_dev = np.load("data/dev_label_" + tag+ ".npy")
+    X_train = np.load(input_folder + "/train_data_"+ str(layer) + "_"+ tag + ".npy")
+    X_dev = np.load(input_folder +"/dev_data_"+ str(layer) + "_"+ tag + ".npy" )
+    y_train = np.load(input_folder +"/train_label_" + tag + ".npy")
+    y_dev = np.load(input_folder +"/dev_label_" + tag+ ".npy")
     
+    os.makedirs(out_path + "/" + setting  + "/" + tag + "/",exist_ok=True)
 
-    
-    probe = linear_probe.train_logistic_regression_probe(X_train, y_train, lambda_l2=0.01,lambda_l1=0.01)
-    label2idx = {tag: 1, 'OTHER': 0}
-    ranking, _ = linear_probe.get_neuron_ordering(probe, label2idx)
-    os.makedirs("neurons_splits/lca_l2_001_l1_001_modif/" + tag + "/",exist_ok=True)
-    np.savetxt("neurons_splits/lca_l2_001_l1_001_modif/"+tag+"/"+str(layer)+"_neurons.txt",ranking,fmt="%d")
+    if setting == "LCA":
+        probe = linear_probe.train_logistic_regression_probe(X_train, y_train, lambda_l2=0.1,lambda_l1=0.1)
+        label2idx = {tag: 1, 'OTHER': 0}
+        ranking, _ = linear_probe.get_neuron_ordering(probe, label2idx)
+    elif setting == "Noreg":
+        probe = linear_probe.train_logistic_regression_probe(X_train, y_train, lambda_l2=0.0,lambda_l1=0.0)
+        label2idx = {tag: 1, 'OTHER': 0}
+        ranking, _ = linear_probe.get_neuron_ordering(probe, label2idx)
+    elif setting == "Lasso-01":
+        probe = linear_probe.train_logistic_regression_probe(X_train, y_train, lambda_l2=0.0,lambda_l1=0.1)
+        label2idx = {tag: 1, 'OTHER': 0}
+        ranking, _ = linear_probe.get_neuron_ordering(probe, label2idx)
+    elif setting == "Ridge-01":
+        probe = linear_probe.train_logistic_regression_probe(X_train, y_train, lambda_l2=0.1,lambda_l1=0.0)
+        label2idx = {tag: 1, 'OTHER': 0}
+        ranking, _ = linear_probe.get_neuron_ordering(probe, label2idx)
+    elif setting == "Probeless":
+        ranking = probeless.get_neuron_ordering(X,y)
+    elif setting == "Selectivity":
+        mu_plus = np.mean(X_train[y_train==1], axis=0)
+        mu_minus = np.mean(X_dev[y_dev==0],axis=0)
+        max_activations = np.max(X_train, axis=0)
+        min_activations = np.min(X_train, axis=0)
+
+        sel = (mu_plus - mu_minus) / (max_activations - min_activations)
+        ranking = np.argsort(np.abs(sel))[::-1]
+    elif setting == "IoU":
+        ranking = iou_probe.get_neuron_ordering(X_train, y_train)    
+    elif setting == "Gaussian":
+        probe = gaussian_probe.train_probe(X,y)
+        ranking = gaussian_probe.get_neuron_ordering(probe)  
+    else:
+        print("ERROR input setting")
+        exit(0)
+    np.savetxt(out_path + "/" + setting  + "/" + tag + "/"+str(layer)+"_neurons.txt",ranking,fmt="%d")
     
     
 
@@ -38,7 +68,7 @@ def main():
     
     parser = argparse.ArgumentParser(
             description="Extract Neurons")
-    parser.add_argument('--input_folder', type=str,
+    parser.add_argument('--input_folder', type=str,default='data',
                        help='folder contains raw data')
     parser.add_argument('--out_path', type=str, default='output',
                        help='Output path. Default to ./output/')
@@ -52,3 +82,5 @@ def main():
 
     compute(args.input_folder, args.out_path ,args.tag, args.layer, args.setting)
         
+if __name__ == "__main__":
+    main()
