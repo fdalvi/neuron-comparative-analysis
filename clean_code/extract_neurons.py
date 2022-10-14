@@ -55,8 +55,13 @@ def compute(input_folder, out_path, tag, layer, setting):
     elif setting == "IoU":
         ranking = iou_probe.get_neuron_ordering(X_train, y_train)    
     elif setting == "Gaussian":
-        probe = gaussian_probe.train_probe(X,y)
-        ranking = gaussian_probe.get_neuron_ordering(probe)  
+        probe = gaussian_probe.train_probe(X_train,y_train)
+        ranking = gaussian_probe.get_neuron_ordering(probe) 
+    elif setting == "random":
+        indices = np.arange(768)
+        np.random.shuffle(indices) 
+        ranking = indices
+        
     else:
         print("ERROR input setting")
         exit(0)
