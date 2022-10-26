@@ -19,10 +19,10 @@ import argparse
 
 def compute(input_folder, out_path, tag, layer, setting):
    
-    X_train = np.load(input_folder + "/train_data_"+ str(layer) + "_"+ tag + ".npy")
-    X_dev = np.load(input_folder +"/dev_data_"+ str(layer) + "_"+ tag + ".npy" )
-    y_train = np.load(input_folder +"/train_label_" + tag + ".npy")
-    y_dev = np.load(input_folder +"/dev_label_" + tag+ ".npy")
+    X_train = np.load(os.path.join(input_folder, "train_data_"+ str(layer) + "_"+ tag + ".npy"))
+    X_dev = np.load(os.path.join(input_folder, "dev_data_"+ str(layer) + "_"+ tag + ".npy") )
+    y_train = np.load(os.path.join(input_folder, "train_label_"+ str(layer) + "_"+ tag + ".npy"))
+    y_dev = np.load(os.path.join(input_folder, "dev_label_"+ str(layer) + "_"+ tag + ".npy"))
     
     os.makedirs(out_path + "/" + setting  + "/" + tag + "/",exist_ok=True)
 
@@ -65,8 +65,8 @@ def compute(input_folder, out_path, tag, layer, setting):
     else:
         print("ERROR input setting")
         exit(0)
-    np.savetxt(out_path + "/" + setting  + "/" + tag + "/"+str(layer)+"_neurons.txt",ranking,fmt="%d")
-    
+    np.savetxt(os.path.join(out_path, setting, tag , str(layer) + "_neurons.txt"),ranking,fmt="%d")
+
     
 
 def main():
