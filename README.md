@@ -2,6 +2,10 @@
 
 This is the official repo of our paper entitled ...
 
+## Requirements
+
+We don't have any additional requirements besides the requirements of NeuroX https://github.com/fdalvi/NeuroX
+
 ## Usage
 
 ### Step 1: preprocess the dataset
@@ -81,7 +85,16 @@ This step computes three metrics for evaluation, namely classification accuracy 
 ### Step 4: Compatiability score (AvgOverlap and Neuron Vote)
 
 ```bash
-Todo
+python avg_overlap.py --input_folder neurons --out_path score --setting Gaussian,LCA,Lasso-01,Ridge-01,Probeless,Selectivity,IoU --baseline_methods Gaussian,LCA,Lasso-01,Ridge-01 --tags NNPS,NN,VBN --layers 0,1,2,3 --num_of_neurons 10,20,30,40,100
+python neuron_vote.py --input_folder neurons --out_path score --setting Gaussian,LCA,Lasso-01,Ridge-01,Probeless,Selectivity,IoU --baseline_methods Gaussian,LCA,Lasso-01,Ridge-01 --tags NNPS,NN,VBN --layers 0,1,2,3 --num_of_neurons 10,20,30,40,100
+
 ```
 
-This step computes three metrics for evaluation, namely classification accuracy (lca), selectivity and IoU based score
+This step computes the compatibility score. The setting is our target method, the baseline methods are those methods for comparison against. Suppose you have a new method A and want to compare it against B,C,D, you will write the command --setting A and --baseline methods B,C,D.
+
+The output is a matrix with shape (num_of_neurons, layers, tags, baseline methods). You can analyze your method at different dimensions.
+
+## How to Contribute 
+
+If you have proposed a new neuron interpretation method, it is recommended to first try to integrate it into neurox, and then you can add it into this framework to evaluate. If there are any comments or problems, feel free to open an issue and ask us.
+

@@ -28,3 +28,5 @@ do
         done
     done
 done
+python avg_overlap.py --input_folder neurons --out_path score --setting Gaussian,LCA,Lasso-01,Ridge-01,Probeless,Selectivity,IoU --baseline_methods Gaussian,LCA,Lasso-01,Ridge-01 --tags NNPS,NN,VBN --layers 0,1,2,3 --num_of_neurons 10,20,30,40,100
+python neuron_vote.py --input_folder neurons --out_path score --setting Gaussian,LCA,Lasso-01,Ridge-01,Probeless,Selectivity,IoU --baseline_methods Gaussian,LCA,Lasso-01,Ridge-01 --tags NNPS,NN,VBN --layers 0,1,2,3 --num_of_neurons 10,20,30,40,100
