@@ -1,0 +1,3 @@
+[submodule "NeuroX"]
+	path = NeuroX
+	url = https://github.com/fdalvi/NeuroX.git
