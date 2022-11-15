@@ -1,5 +1,4 @@
-python preprocess_dataset.py --input_folder . --out_path data
-python extract_neurons.py --input_folder data --out_path neurons --setting LCA --tag NN --layer 1
+python preprocess_dataset.py --input_folder . --out_path data --words word.txt --labels label.txt --model_name_or_path bert-base-uncased
 tags="VBG VBZ NNPS DT TO CD JJ PRP MD RB VBP VB NNS VBN POS IN NN CC NNP VBD"
 settings="random Noreg Gaussian LCA Lasso-01 Ridge-01 Probeless Selectivity IoU"
 layers="0 1 2 3 4 5 6 7 8 9 10 11 12"
